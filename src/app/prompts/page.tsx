@@ -1,10 +1,10 @@
 import { Metadata } from "next";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { getDB } from "@/lib/db";
 import { PromptsTable } from "./prompts-table";
 import { PromptsCards } from "./prompts-cards";
+import { DownloadButton } from "@/components/download-button";
 
 import { getRiskService } from "@/lib/risk";
 
@@ -21,6 +21,8 @@ export default async function PromptsPage() {
     riskService.assessAndFilterPrompts(db.prompts);
   db.addRisMetricsSet(riskMetrics);
 
+  const prompts = db.getPromptsWithUserAndRiskMetrics();
+
   return (
     <div className="flex-col md:flex max-w-screen-xl mx-auto">
       <div className="flex-1 space-y-4 pt-6">
@@ -28,7 +30,7 @@ export default async function PromptsPage() {
           <h2 className="text-3xl font-bold tracking-tight">Prompts</h2>
           <div className="flex items-center space-x-2">
             <CalendarDateRangePicker />
-            <Button>Download</Button>
+            <DownloadButton toDownload={prompts} filename="prompts" >Download</DownloadButton>
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
@@ -42,7 +44,7 @@ export default async function PromptsPage() {
             <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
               <PromptsCards />
             </div>
-            <PromptsTable prompts={db.getPromptsWithUserAndRiskMetrics()} />
+            <PromptsTable prompts={prompts} />
           </TabsContent>
         </Tabs>
       </div>

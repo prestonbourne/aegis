@@ -6,6 +6,7 @@ import { UserStatsCards } from "./user-stats-cards";
 import { UserDataTable } from "./user-data-table";
 import { getDB } from "@/lib/db";
 import { getRiskService } from "@/lib/risk";
+import { DownloadButton } from "@/components/download-button";
 
 export const metadata: Metadata = {
   title: "Aegis Dashboard | Users",
@@ -33,7 +34,9 @@ export default async function UsersPage() {
           <h2 className="text-3xl font-bold tracking-tight">Users</h2>
           <div className="flex items-center space-x-2">
             <CalendarDateRangePicker />
-            <Button>Download</Button>
+            <DownloadButton toDownload={usersWithRisk} filename="users">
+              Download
+            </DownloadButton>
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">

@@ -1,7 +1,5 @@
 "use client";
-import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
 import { Chip } from "@/components/chip";
 import { GearIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
@@ -13,9 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { prettyPercent } from "@/lib/number-utils";
-import { useState, useEffect } from "react";
-import { useMockData } from "@/app-context";
+import { useState } from "react";
 import {
   Form,
   FormField,
@@ -35,8 +31,10 @@ import {
   MAX_MALICIOUS_PROMPT_RATE,
   MAX_PROMPTS,
   MAX_USERS,
-  DEFAULT_CONFIG,
-} from "@/data";
+  DEFAULT_DATA_CONFIG,
+} from "@/lib/constants";
+import { updateDBAction } from "@/lib/db";
+import { prettyPercent } from "@/lib/utils";
 
 const configFormSchema = z.object({
   userCount: z.number().min(MIN_USERS).max(MAX_USERS),
@@ -50,23 +48,17 @@ const configFormSchema = z.object({
 export function Configuration() {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
 
-  const { setDataConfig, config } = useMockData();
-
   const form = useForm<z.infer<typeof configFormSchema>>({
     resolver: zodResolver(configFormSchema),
     defaultValues: {
-      userCount: DEFAULT_CONFIG.userCount,
-      promptCount: DEFAULT_CONFIG.promptCount,
-      maliciousPromptRate: DEFAULT_CONFIG.maliciousPromptRate,
+      userCount: DEFAULT_DATA_CONFIG.userCount,
+      promptCount: DEFAULT_DATA_CONFIG.promptCount,
+      maliciousPromptRate: DEFAULT_DATA_CONFIG.maliciousPromptRate,
     },
   });
 
   function onSubmit(values: z.infer<typeof configFormSchema>) {
-    const newConfig = {
-      ...config,
-      ...values,
-    };
-    setDataConfig(newConfig);
+    updateDBAction(values);
     setDialogIsOpen(false);
   }
 
@@ -134,8 +126,8 @@ export function Configuration() {
                       <FormLabel>Prompts: {value}</FormLabel>
                       <FormControl>
                         <Slider
-                          min={MIN_USERS}
-                          max={MAX_USERS}
+                          min={MIN_PROMPTS}
+                          max={MAX_PROMPTS}
                           step={1}
                           defaultValue={[value]}
                           onValueChange={(e) => {
@@ -184,11 +176,6 @@ export function Configuration() {
               />
             </div>
             <div className="float-right flex items-center gap-4">
-              {/* <Label>Don&apos;t show this dialog again</Label>
-              <Switch
-                checked={localStorage.getItem(dontShowKey) === "true"}
-                onCheckedChange={handleDontShowChange}
-              /> */}
               <Button type="submit">Load</Button>
             </div>
           </form>

@@ -1,25 +1,26 @@
 import { Metadata } from "next";
-import Image from "next/image";
-
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
-import { RecentPrompts } from "./recent-prompts";
-import { StatsCard } from "@/components/stats-card";
+import { getDB } from "@/lib/db";
+import { PromptsTable } from "./prompts-table";
+import { PromptsCards } from "./prompts-cards";
+
+import { getRiskService } from "@/lib/risk";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Example dashboard app built using the components.",
+  title: "Aegis Dashboard | Prompts",
+  description: "LLM Safety and Analytics Dashboard",
 };
 
-export default function PromptsPage() {
+export default async function PromptsPage() {
+  const db = await getDB();
+
+  const riskService = await getRiskService();
+  const { riskMetrics } =
+    riskService.assessAndFilterPrompts(db.prompts);
+  db.addRisMetricsSet(riskMetrics);
+
   return (
     <div className="flex-col md:flex max-w-screen-xl mx-auto">
       <div className="flex-1 space-y-4 pt-6">
@@ -36,37 +37,12 @@ export default function PromptsPage() {
             <TabsTrigger value="analytics" disabled>
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="reports" disabled>
-              Reports
-            </TabsTrigger>
-            <TabsTrigger value="notifications" disabled>
-              Notifications
-            </TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-              <StatsCard
-                title="Total Prompts"
-                value="12,041"
-                change="+16.09 from last month"
-              />
-              <StatsCard
-                title="Flagged Prompts"
-                value="12,041"
-                change="+16.09 from last month"
-              />
-              <StatsCard
-                title="Blocked Prompts"
-                value="12,041"
-                change="+16.09 from last month"
-              />
-              <StatsCard
-                title="Blocked & Flagged Prompt Ratio"
-                value="12,041"
-                change="+16.09 from last month"
-              />
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
+              <PromptsCards />
             </div>
-            <RecentPrompts prompts={[]} />
+            <PromptsTable prompts={db.getPromptsWithUserAndRiskMetrics()} />
           </TabsContent>
         </Tabs>
       </div>

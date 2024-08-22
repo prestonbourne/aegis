@@ -1,6 +1,21 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import type { RiskLevel } from "@/lib/risk/types";
+
+export const getChipLevel = (level: string | RiskLevel) => {
+  switch (level) {
+    case "low":
+      return "warning";
+    case "medium":
+      return "warning";
+    case "high":
+      return "danger";
+    default:
+    case "safe":
+      return "info";
+  }
+};
 
 const chipVariants = cva(
   "inline-flex items-center justify-center px-3 py-1 font-medium",

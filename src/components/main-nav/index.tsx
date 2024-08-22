@@ -21,7 +21,7 @@ export function MainNav({
             Prompts
           </Link>
           <Link
-            href="/examples/dashboard"
+            href="/users"
             className="text-sm font-medium text-muted transition-colors hover:text-primary"
           >
             Users

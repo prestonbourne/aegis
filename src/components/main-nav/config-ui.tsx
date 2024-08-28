@@ -65,7 +65,7 @@ export function Configuration() {
 
   return (
     <Dialog modal open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button
           variant={"outline"}
           className={cn(

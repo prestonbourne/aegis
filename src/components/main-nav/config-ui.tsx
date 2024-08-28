@@ -35,6 +35,7 @@ import {
 } from "@/lib/constants";
 import { updateDBAction } from "@/lib/db";
 import { prettyPercent } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const configFormSchema = z.object({
   userCount: z.number().min(MIN_USERS).max(MAX_USERS),
@@ -65,14 +66,14 @@ export function Configuration() {
   return (
     <Dialog modal open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
       <DialogTrigger>
-        <Chip
-          level={"paper"}
-          className="inline-flex gap-2 items-center text-muted transition-colors hover:text-primary"
-          rounded={false}
-          textSize={"normal"}
+        <Button
+          variant={"outline"}
+          className={cn(
+            "flex gap-1 font-normal text-muted transition-colors hover:text-primary"
+          )}
         >
           <GearIcon /> Configuration
-        </Chip>
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="pb-2 border-b">

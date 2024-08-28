@@ -124,7 +124,7 @@ const UserRow = ({ user }: { user: UserWithRiskMetrics }) => {
         </div>
       </TableCell>
       <TableCell>
-        <p className="text-sm text-muted">{user.email}</p>
+        <p className="text-sm">{user.email}</p>
       </TableCell>
       <TableCell>
         <div className="flex gap-1">

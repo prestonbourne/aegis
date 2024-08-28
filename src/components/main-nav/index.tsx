@@ -1,11 +1,22 @@
+"use client";
 import Link from "next/link";
 import TeamSwitcher from "./team-switcher";
 import { Configuration } from "./config-ui";
+import { usePathname } from "next/navigation";
+import { cx } from "class-variance-authority";
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
+  const path = usePathname();
+  console.log(path);
+
+  const linkStyles = cx(
+    "text-sm font-medium text-muted transition-colors hover:text-primary",
+    "data-[selected=true]:text-primary data-[selected=true]:font-semibold"
+  );
+
   return (
     <div className="border-b flex h-16 items-center">
       <div className="flex justify-between w-full max-w-screen-xl mx-auto px-4">
@@ -16,19 +27,21 @@ export function MainNav({
         >
           <Link
             href="/prompts"
-            className="text-sm font-medium text-muted transition-colors hover:text-primary"
+            data-selected={path === "/prompts" ? true : undefined}
+            className={linkStyles}
           >
             Prompts
           </Link>
           <Link
             href="/users"
-            className="text-sm font-medium text-muted transition-colors hover:text-primary"
+            className={linkStyles}
+            data-selected={path === "/users" ? true : undefined}
           >
             Users
           </Link>
         </nav>
         <div className="ml-auto flex items-center space-x-4">
-         <Configuration />
+          <Configuration />
         </div>
       </div>
     </div>

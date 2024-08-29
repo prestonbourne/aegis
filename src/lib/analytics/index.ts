@@ -165,7 +165,7 @@ export const aggregateUsersBySignupWeek = <
 
   users.forEach((u) => {
     const joinDate = new Date(u.dateJoined);
-    const midnightDiff = joinDate.getDate() - joinDate.getDate();
+    const midnightDiff = joinDate.getDate() - joinDate.getDay();
     const prevSunday = new Date(joinDate.setDate(midnightDiff));
 
     prevSunday.setHours(0, 0, 0, 0);

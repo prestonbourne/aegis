@@ -25,14 +25,15 @@ import {
 } from "@/lib/analytics";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
+  safe: {
+    label: "Safe",
+    color: "hsl(var(--chart-2))", // green
   },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
+  malicious: {
+    label: "Malicious",
+    color: "hsl(var(--chart-1))", // red
   },
+
 } satisfies ChartConfig;
 
 type PromptsMaliciousComparisonChartProps = {
@@ -42,7 +43,6 @@ type PromptsMaliciousComparisonChartProps = {
 export function PromptsAreaChart({
   prompts,
 }: PromptsMaliciousComparisonChartProps) {
-
   const chartData = pipe(
     prompts,
     orderPromptsByDate,
@@ -82,16 +82,16 @@ export function PromptsAreaChart({
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
-              right: 12,
+              left: 0,
+              right: 0,
             }}
           >
             <CartesianGrid vertical={false} />
             <YAxis
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
-              tickCount={3}
+              tickMargin={24}
+              tickCount={10}
             />
             <XAxis
               dataKey="date"
@@ -107,45 +107,45 @@ export function PromptsAreaChart({
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <defs>
-              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="fillMalicious" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-desktop)"
+                  stopColor="var(--color-malicious)"
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-desktop)"
+                  stopColor="var(--color-malicious)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="fillSafe" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-mobile)"
+                  stopColor="var(--color-safe)"
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-mobile)"
+                  stopColor="var(--color-safe)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
             </defs>
             <Area
-              dataKey="malicious"
+              dataKey="safe"
               type="natural"
-              fill="url(#fillMobile)"
+              fill="url(#fillSafe)"
               fillOpacity={0.4}
-              stroke="var(--color-mobile)"
+              stroke="var(--color-safe)"
               stackId="a"
             />
             <Area
-              dataKey="safe"
+              dataKey="malicious"
               type="natural"
-              fill="url(#fillDesktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              fill="url(#fillMalicious)"
+              fillOpacity={0.9}
+              stroke="var(--color-malicious)"
               stackId="a"
             />
           </AreaChart>

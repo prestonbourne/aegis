@@ -2,7 +2,7 @@
 
 import { TrendingUp } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import type { UserWithRiskMetrics } from "@/lib/db/types";
+import type { UserWithRiskMetrics, User } from "@/lib/db/types";
 import { pipe } from "@/lib/utils";
 import {
   Card,
@@ -25,28 +25,18 @@ import {
 } from "@/lib/analytics";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "Mobile",
+  signupCount: {
+    label: "Sign ups",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
 type UsersAreaChartProps = {
   users: UserWithRiskMetrics[];
+  safe: User[];
+  flagged: User[];
+  blocked: User[];
 };
-
-/**
- *
- * $chartDataSchema
- * {
- *  date: string
- *  signups: number
- * }
- */
 
 export const UsersAreaChart = ({ users }: UsersAreaChartProps) => {
   const chartData = pipe(
@@ -55,7 +45,6 @@ export const UsersAreaChart = ({ users }: UsersAreaChartProps) => {
     aggregateUsersBySignupWeek,
     transfomUserDateMapToRechartData
   );
-
 
   const date = new Date();
   const monthNames = [
@@ -72,15 +61,16 @@ export const UsersAreaChart = ({ users }: UsersAreaChartProps) => {
     "November",
     "December",
   ];
+  // this should also be dynamic
   const currentMonthName = monthNames[date.getMonth()];
-  const threeMonthsAgo = monthNames[date.getMonth() - 3];
+  const fourMonthsAgo = monthNames[date.getMonth() - 4];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Weekly Prompts</CardTitle>
+        <CardTitle>Weekly Signups</CardTitle>
         <CardDescription>
-          Showing total number of safe and malicious prompts per week
+          Showing total number of user sign ups per week
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -89,12 +79,17 @@ export const UsersAreaChart = ({ users }: UsersAreaChartProps) => {
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
-              right: 12,
+              left: 0,
+              right: 0,
             }}
           >
             <CartesianGrid vertical={false} />
-            <YAxis />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={24}
+              tickCount={5}
+            />
             <XAxis
               dataKey="week"
               tickLine={false}
@@ -109,15 +104,15 @@ export const UsersAreaChart = ({ users }: UsersAreaChartProps) => {
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <defs>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="fillSignup" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-mobile)"
+                  stopColor="var(--color-signupCount)"
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-mobile)"
+                  stopColor="var(--color-signupCount)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
@@ -125,9 +120,9 @@ export const UsersAreaChart = ({ users }: UsersAreaChartProps) => {
             <Area
               dataKey="signupCount"
               type="natural"
-              fill="url(#fillMobile)"
+              fill="url(#fillSignup)"
               fillOpacity={0.4}
-              stroke="var(--color-mobile)"
+              stroke="var(--color-signupCount)"
               stackId="a"
             />
           </AreaChart>
@@ -140,7 +135,7 @@ export const UsersAreaChart = ({ users }: UsersAreaChartProps) => {
               Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              {threeMonthsAgo} - {currentMonthName} 2024
+              {fourMonthsAgo} - {currentMonthName} 2024
             </div>
           </div>
         </div>

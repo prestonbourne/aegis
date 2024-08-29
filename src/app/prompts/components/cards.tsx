@@ -1,6 +1,9 @@
 import { StatsCard } from "@/components/stats-card";
 import { getDB } from "@/lib/db";
-import { getPromptPercentageChangeByMonth, mapPromptsByMonth } from "@/lib/analytics";
+import {
+  getPromptPercentageChangeByMonth,
+  mapPromptsByMonth,
+} from "@/lib/analytics";
 import { getRiskService } from "@/lib/risk";
 
 export const PromptsCards = async () => {
@@ -15,14 +18,16 @@ export const PromptsCards = async () => {
   const currentMonth = new Date().getMonth();
   const totalPrompts = db.prompts.length;
   const promptsByMonth = mapPromptsByMonth(db.prompts);
-  const totalPercentDiff = getPromptPercentageChangeByMonth(promptsByMonth)[currentMonth] ?? 0;
+  const totalPercentDiff =
+    getPromptPercentageChangeByMonth(promptsByMonth)[currentMonth] ?? 0;
 
   // 2nd Card Stats
   const safePrompts = safe
     .map((rm) => db.getPromptById(rm.id))
     .filter((p) => p !== undefined);
   const safeByMonth = mapPromptsByMonth(safePrompts);
-  const safePercentDiff = getPromptPercentageChangeByMonth(safeByMonth)[currentMonth] ?? 0;
+  const safePercentDiff =
+    getPromptPercentageChangeByMonth(safeByMonth)[currentMonth] ?? 0;
 
   // 3rd Card Stats
   const flaggedPrompts = flagged

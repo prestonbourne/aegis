@@ -24,3 +24,5 @@ export type PromptWithUserAndRiskMetrics = Prompt & {
 };
 
 export type UserWithRiskMetrics = User & { riskMetrics: RiskMetrics };
+
+export { User };

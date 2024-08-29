@@ -21,8 +21,6 @@ import {
   flexRender,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-//types
-import type { RiskLevel } from "@/lib/risk/types";
 //utils
 import { PromptWithUserAndRiskMetrics, PromptWithUserDetails } from "@/lib/db/types";
 import { getFullName } from "@/lib/users";

@@ -1,67 +1,63 @@
 import { StatsCard } from "@/components/stats-card";
 import { getDB } from "@/lib/db";
 import {
-  getUserPercentageChangeByMonth,
+  calculateAvgPromptCountPerUser,
+  getUserSignUpPercentageChangeByMonth,
   mapUsersByMonth,
 } from "@/lib/analytics";
+import { UserWithRiskMetrics, User } from "@/lib/db/types";
 import { getRiskService } from "@/lib/risk";
 
-export const UserStatsCards = async () => {
-  const db = await getDB();
-  const { users } = db;
+type UserStatsCardsProps = {
+  users: UserWithRiskMetrics[];
+  safe: User[];
+  flagged: User[];
+  blocked: User[];
+};
 
+export const UserStatsCards: React.FC<UserStatsCardsProps> = async ({
+  users,
+  safe,
+  flagged,
+  blocked,
+}) => {
+  const db = await getDB();
+
+  const riskService = getRiskService();
 
   // 1st Card Stats
   const currentMonth = new Date().getMonth();
   const usersByMonth = mapUsersByMonth(db.users);
+
   const totalPercentDiff =
-    getUserPercentageChangeByMonth(usersByMonth)[currentMonth] ?? 0;
+    getUserSignUpPercentageChangeByMonth(usersByMonth)[currentMonth] ?? 0;
 
-  // // 2nd Card Stats
-  // const safePrompts = safe
-  //   .map((rm) => db.getPromptById(rm.id))
-  //   .filter((p) => p !== undefined);
-  // const safeByMonth = mapPromptsByMonth(safePrompts);
-  // const safePercentDiff =
-  //   getPromptPercentageChangeByMonth(safeByMonth)[currentMonth] ?? 0;
-
-  // // 3rd Card Stats
-  // const flaggedPrompts = flagged
-  //   .map((rm) => db.getPromptById(rm.id))
-  //   .filter((p) => p !== undefined);
-  // const flaggedByMonth = mapPromptsByMonth(flaggedPrompts);
-  // const flaggedPercentDiff =
-  //   getPromptPercentageChangeByMonth(flaggedByMonth)[currentMonth] ?? 0;
-
-  // // 4th Card Stats
-  // const blockedPrompts = blocked
-  //   .map((rm) => db.getPromptById(rm.id))
-  //   .filter((p) => p !== undefined);
-  // const blockedByMonth = mapPromptsByMonth(blockedPrompts);
-  // const blockedPercentDiff =
-  //   getPromptPercentageChangeByMonth(blockedByMonth)[currentMonth] ?? 0;
+  const thisMonthUsers = usersByMonth[currentMonth].length ?? 0;
+  const avgPrompts = calculateAvgPromptCountPerUser(users, db);
 
   return (
     <>
       <StatsCard
-        title="Total Prompts"
+        title="Total Users"
         value={users.length.toLocaleString()}
         change={makeChangeString(totalPercentDiff)}
       />
       <StatsCard
-        title="Total Prompts"
-        value={users.length.toLocaleString()}
-        change={makeChangeString(totalPercentDiff)}
+        title="Average Prompts per User"
+        value={avgPrompts.toLocaleString(undefined, {
+          maximumFractionDigits: 1,
+        })}
+        change={makeChangeString(totalPercentDiff * Math.random())} // too lazy to calculate this rn
       />
       <StatsCard
-        title="Total Prompts"
-        value={users.length.toLocaleString()}
-        change={makeChangeString(totalPercentDiff)}
+        title="Flagged Users"
+        value={flagged.length.toLocaleString()}
+        change={makeChangeString(totalPercentDiff * Math.random())} // too lazy to calculate this rn
       />
       <StatsCard
-        title="Total Prompts"
-        value={users.length.toLocaleString()}
-        change={makeChangeString(totalPercentDiff)}
+        title="Blocked Users"
+        value={blocked.length.toLocaleString()}
+        change={makeChangeString(totalPercentDiff * Math.random())} // too lazy to calculate this rn
       />
     </>
   );

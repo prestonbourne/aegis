@@ -5,6 +5,7 @@ import {
 } from "../db/types";
 import type { Prompt } from "../prompts";
 import type { User } from "../users";
+import { DB } from "../db/constructor";
 
 // Prompt analytics utils
 export const mapPromptsByMonth = (prompts: Prompt[]) => {
@@ -44,7 +45,22 @@ export const getPromptPercentageChangeByMonth = (
 
   return monthToPercentDiff;
 };
+
 // user analytics utils
+
+export const calculateAvgPromptCountPerUser = (
+  users: Array<UserWithRiskMetrics | User>,
+  db: DB
+) => {
+  const n = users.length;
+  let totalPrompts = 0;
+
+  for (const u of users) {
+    const promptsN = db.getPromptsByUserId(u.id).length;
+    totalPrompts += promptsN;
+  }
+  return totalPrompts / n;
+};
 
 export const mapUsersByMonth = (users: User[]) => {
   const usersByMonth: Record<number, User[]> = {};
@@ -61,7 +77,7 @@ export const mapUsersByMonth = (users: User[]) => {
   return usersByMonth;
 };
 
-export const getUserPercentageChangeByMonth = (
+export const getUserSignUpPercentageChangeByMonth = (
   usersByMonth: Record<number, User[]>
 ) => {
   const months = Object.keys(usersByMonth).map(Number);
@@ -83,6 +99,7 @@ export const getUserPercentageChangeByMonth = (
 
   return monthToPercentDiff;
 };
+
 
 type PromptDateMapWithRiskLite = Record<
   string,

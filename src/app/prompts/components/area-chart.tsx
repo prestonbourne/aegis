@@ -49,9 +49,6 @@ export function PromptsAreaChart({
     aggregatePromptsRiskedByWeek,
     transformPromptDateMapToRechartsData
   );
-  console.group("chartData");
-  console.log(chartData);
-  console.groupEnd();
 
   const date = new Date();
   const monthNames = [

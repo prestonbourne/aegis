@@ -10,14 +10,9 @@ export const UserStatsCards = async () => {
   const db = await getDB();
   const { users } = db;
 
-  const riskService = await getRiskService();
-  const { flagged, blocked, safe, riskMetrics } =
-    riskService.assessAndFilterPrompts(db.prompts);
-  db.addRisMetricsSet(riskMetrics);
 
   // 1st Card Stats
   const currentMonth = new Date().getMonth();
-  const totalPrompts = db.prompts.length;
   const usersByMonth = mapUsersByMonth(db.users);
   const totalPercentDiff =
     getUserPercentageChangeByMonth(usersByMonth)[currentMonth] ?? 0;
@@ -68,21 +63,6 @@ export const UserStatsCards = async () => {
         value={users.length.toLocaleString()}
         change={makeChangeString(totalPercentDiff)}
       />
-      {/* <StatsCard
-        title="Total Prompts"
-        value={total.toLocaleString()}
-        change={makeChangeString(percentDiff)}
-      />
-      <StatsCard
-        title="Flagged Prompts"
-        value={thisMonthsFlagged.length.toLocaleString()}
-        change={makeChangeString(flaggedPercentDiff)}
-      />
-      <StatsCard
-        title="Blocked Prompts"
-        value={high.length.toLocaleString()}
-        change={makeChangeString(blockedPercentDiff)}
-      /> */}
     </>
   );
 };

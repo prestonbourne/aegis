@@ -26,15 +26,27 @@ const getFirstDayOfPreviousMonth = () => {
   return currentDate;
 };
 
+const firstDayThreeMonthsAgo = () => {
+  let currentDate = new Date();
+  currentDate.setDate(1);
+  currentDate.setMonth(currentDate.getMonth() - 3);
+  return currentDate;
+};
+
 export function getRandDateBetween(
   endDate: Date = new Date(),
   startDate?: Date
 ): Date {
-  startDate = startDate || getFirstDayOfPreviousMonth();
+  startDate = startDate || firstDayThreeMonthsAgo();
+
+  // this biases towards the end so we do a random offset to get a more even distribution
 
   const startTime = startDate.getTime();
   const endTime = endDate.getTime();
-  const randomTime = startTime + Math.random() * (endTime - startTime);
+  const slowDownFactor = Math.min(1, Math.random() * 2);
+
+  const randomTime =
+    startTime + (Math.random() * (endTime - startTime) );
   return new Date(randomTime);
 }
 
@@ -45,7 +57,6 @@ export const getFullName = (firstName: string, lastName: string) => {
 export const getInitials = (firstName: string, lastName: string) => {
   return `${firstName[0]}${lastName[0]}`;
 };
-
 
 export const arraysOverlap = (arr1: any[], arr2: any[]) => {
   return arr1.some((item) => arr2.includes(item));
@@ -91,4 +102,31 @@ export const weightedRandomFloat = (
   // Generate a random number and scale it to the desired range
   const random = betaRandom(alpha, beta);
   return min + random * (max - min);
+};
+
+type AnyFunc = (...arg: any) => any;
+
+type PipeArgs<F extends AnyFunc[], Acc extends AnyFunc[] = []> = F extends [
+  (...args: infer A) => infer B
+]
+  ? [...Acc, (...args: A) => B]
+  : F extends [(...args: infer A) => any, ...infer Tail]
+  ? Tail extends [(arg: infer B) => any, ...any[]]
+    ? PipeArgs<Tail, [...Acc, (...args: A) => B]>
+    : Acc
+  : Acc;
+
+type LastFnReturnType<F extends Array<AnyFunc>, Else = never> = F extends [
+  ...any[],
+  (...arg: any) => infer R
+]
+  ? R
+  : Else;
+
+export const pipe = <FirstFn extends AnyFunc, F extends AnyFunc[]>(
+  arg: Parameters<FirstFn>[0],
+  firstFn: FirstFn,
+  ...fns: PipeArgs<F> extends F ? F : PipeArgs<F>
+): LastFnReturnType<F, ReturnType<FirstFn>> => {
+  return (fns as AnyFunc[]).reduce((acc, fn) => fn(acc), firstFn(arg));
 };

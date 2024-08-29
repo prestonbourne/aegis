@@ -142,6 +142,14 @@ export class RiskService {
     }
   };
 
+  /**
+   * 
+   * Ideally there would be a more mature model to classify what is a safe, flagged, or blocked prompt
+   * it would be based on a the admin's configuration of the thresholds. The current implementation is 
+   * spaghetti(ish) because the risk service is not aware of the user set thresholds, it is only aware of the its own
+   *  discretionary idea of what should be safe, flagged or blocked.
+   * 
+   */
   assessAndFilterPrompts = (prompts: Prompt[]) => {
     if (this._cachedFilteredRiskMetrics) {
       return this._cachedFilteredRiskMetrics;

@@ -10,7 +10,6 @@ export function MainNav({
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const path = usePathname();
-  console.log(path);
 
   const linkStyles = cx(
     "text-sm font-medium text-muted transition-colors hover:text-primary",

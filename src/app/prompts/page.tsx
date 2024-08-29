@@ -2,23 +2,29 @@ import { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { getDB } from "@/lib/db";
-import { PromptsTable } from "./prompts-table";
-import { PromptsCards } from "./prompts-cards";
+import { PromptsTable } from "./components/table";
+import { PromptsCards } from "./components/cards";
 import { DownloadButton } from "@/components/download-button";
 
 import { getRiskService } from "@/lib/risk";
+import { PromptsAreaChart } from "./components/area-chart";
 
 export const metadata: Metadata = {
   title: "Aegis Dashboard | Prompts",
   description: "LLM Safety and Analytics Dashboard",
 };
 
-export default async function PromptsPage() {
+export default async function PromptsPage({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const db = await getDB();
 
   const riskService = await getRiskService();
-  const { riskMetrics } =
-    riskService.assessAndFilterPrompts(db.prompts);
+  const { riskMetrics } = riskService.assessAndFilterPrompts(db.prompts);
   db.addRisMetricsSet(riskMetrics);
 
   const prompts = db.getPromptsWithUserAndRiskMetrics();
@@ -30,15 +36,15 @@ export default async function PromptsPage() {
           <h2 className="text-3xl font-bold tracking-tight">Prompts</h2>
           <div className="flex items-center space-x-2">
             <CalendarDateRangePicker />
-            <DownloadButton toDownload={prompts} filename="prompts" >Download</DownloadButton>
+            <DownloadButton toDownload={prompts} filename="prompts">
+              Download
+            </DownloadButton>
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics">
-              Analytics
-            </TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
@@ -50,7 +56,7 @@ export default async function PromptsPage() {
             <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
               <PromptsCards />
             </div>
-            <PromptsTable prompts={prompts} />
+            <PromptsAreaChart prompts={prompts} />
           </TabsContent>
         </Tabs>
       </div>

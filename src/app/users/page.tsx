@@ -2,11 +2,12 @@ import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
-import { UserStatsCards } from "./user-stats-cards";
-import { UserDataTable } from "./user-data-table";
+import { UserStatsCards } from "./components/cards";
+import { UserDataTable } from "./components/table";
 import { getDB } from "@/lib/db";
 import { getRiskService } from "@/lib/risk";
 import { DownloadButton } from "@/components/download-button";
+import { UsersAreaChart } from "./components/area-chart";
 
 export const metadata: Metadata = {
   title: "Aegis Dashboard | Users",
@@ -42,7 +43,7 @@ export default async function UsersPage() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
+            <TabsTrigger value="analytics">
               Analytics
             </TabsTrigger>
           </TabsList>
@@ -51,6 +52,9 @@ export default async function UsersPage() {
               <UserStatsCards />
             </div>
             <UserDataTable users={usersWithRisk} />
+          </TabsContent>
+          <TabsContent value="analytics" className="space-y-4">
+              <UsersAreaChart users={usersWithRisk} />
           </TabsContent>
         </Tabs>
       </div>

@@ -69,7 +69,7 @@ export function Configuration() {
         <Button
           variant={"outline"}
           className={cn(
-            "flex gap-1 font-normal text-muted transition-colors hover:text-primary"
+            "flex gap-2 font-normal text-muted transition-colors hover:text-primary"
           )}
         >
           <GearIcon /> Configuration

@@ -5,10 +5,19 @@ import { Configuration } from "./config-ui";
 import { usePathname } from "next/navigation";
 import { cx } from "class-variance-authority";
 
+export type MainNavProps = {
+  defaultUserCount: number;
+  defaultPromptCount: number;
+  defaultMaliciousPromptRate: number;
+} & React.HTMLAttributes<HTMLElement>;
+
 export function MainNav({
+  defaultUserCount,
+  defaultPromptCount,
+  defaultMaliciousPromptRate,
   className,
   ...props
-}: React.HTMLAttributes<HTMLElement>) {
+}: MainNavProps) {
   const path = usePathname();
 
   const linkStyles = cx(
@@ -40,7 +49,11 @@ export function MainNav({
           </Link>
         </nav>
         <div className="ml-auto flex items-center space-x-4">
-          <Configuration />
+          <Configuration
+            defaultUserCount={defaultUserCount}
+            defaultPromptCount={defaultPromptCount}
+            defaultMaliciousPromptRate={defaultMaliciousPromptRate}
+          />
         </div>
       </div>
     </div>

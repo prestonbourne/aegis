@@ -9,6 +9,7 @@ export const MIN_MALICIOUS_PROMPT_RATE = 0;
 
 const { floor: fl, random: rnd } = Math;
 
+// i guess this isnt a constant, but it's a good default
 export const DEFAULT_DATA_CONFIG: DataConfig = {
   userCount: fl(rnd() * (MAX_USERS - MIN_USERS / 3) + MIN_USERS) ,
   promptCount: fl(rnd() * (MAX_PROMPTS - MIN_PROMPTS / 3) + MIN_PROMPTS),

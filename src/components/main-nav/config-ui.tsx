@@ -1,6 +1,5 @@
 "use client";
 import { Slider } from "@/components/ui/slider";
-import { Chip } from "@/components/chip";
 import { GearIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +36,7 @@ import { updateDBAction } from "@/lib/db";
 import { prettyPercent } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
+
 const configFormSchema = z.object({
   userCount: z.number().min(MIN_USERS).max(MAX_USERS),
   promptCount: z.number().min(MIN_PROMPTS).max(MAX_PROMPTS),
@@ -46,15 +46,26 @@ const configFormSchema = z.object({
     .max(MAX_MALICIOUS_PROMPT_RATE),
 });
 
-export function Configuration() {
+export type ConfigurationProps = {
+  defaultUserCount: number;
+  defaultPromptCount: number;
+  defaultMaliciousPromptRate: number;
+}
+
+export function Configuration({
+  defaultUserCount,
+  defaultPromptCount,
+  defaultMaliciousPromptRate,
+}: ConfigurationProps) {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
+
 
   const form = useForm<z.infer<typeof configFormSchema>>({
     resolver: zodResolver(configFormSchema),
     defaultValues: {
-      userCount: DEFAULT_DATA_CONFIG.userCount,
-      promptCount: DEFAULT_DATA_CONFIG.promptCount,
-      maliciousPromptRate: DEFAULT_DATA_CONFIG.maliciousPromptRate,
+      userCount: defaultUserCount,
+      promptCount: defaultPromptCount,
+      maliciousPromptRate: defaultMaliciousPromptRate,
     },
   });
 
